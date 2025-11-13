@@ -13,6 +13,7 @@ import pe.edu.utp.proyecto_final.repository.MascotaRepository;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CitaService {
@@ -64,4 +65,33 @@ public class CitaService {
         return citaRepository.findByFecha(fecha);
     }
 
+    public List<Cita> getAllCitas(){
+        return citaRepository.findAll();
+    }
+
+    public void deleteCita(Long id) {
+        citaRepository.deleteById(id);
+    }
+
+    public Optional<Cita> getCitaById(Long id) {
+        return citaRepository.findById(id);
+    }
+
+    public Cita updateCita(Long id, CitaRequestDTO citaDTO) {
+        Cita cita = citaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Error: Cita no encontrada con ID proporcionado."));
+
+        //VERIFICAR SI EL NUEVO HORARIO ESTÁ DISPONIBLE
+        if (isHorarioOcupado(citaDTO.getFecha(), citaDTO.getHora()) &&
+            !(cita.getFecha().equals(citaDTO.getFecha()) && cita.getHora().equals(citaDTO.getHora()))) {
+            throw new RuntimeException("Error: Horario no disponible :c");
+        }
+
+        cita.setFecha(citaDTO.getFecha());
+        cita.setHora(citaDTO.getHora());
+        cita.setServicio(citaDTO.getServicio());
+        cita.setPrecio(servicioService.getPrecio(citaDTO.getServicio()));
+
+        return citaRepository.save(cita);
+    }
 }

@@ -47,4 +47,38 @@ public class CitaController {
         {
         return ResponseEntity.ok(citaService.getCitasPorFecha(fecha));
     }
+
+    //GET / Leer todas las citas
+    @GetMapping
+    public ResponseEntity<List<Cita>> getAllCitas() {
+        return ResponseEntity.ok(citaService.getAllCitas());
+    }
+
+    //DELETE / Borrar una cita por ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCita(@PathVariable Long id) {
+        citaService.deleteCita(id);
+        return ResponseEntity.ok().build();
+    }
+
+    //GET / Leer una cita por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Cita> getCitaById(@PathVariable Long id) {
+        return citaService.getCitaById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    //UPDATE / Actualizar una cita
+    @PutMapping("/{id}")
+    public ResponseEntity<Cita> updateCita(
+            @PathVariable Long id,
+            @RequestBody CitaRequestDTO citaDTO) {
+        try {
+            Cita updatedCita = citaService.updateCita(id, citaDTO);
+            return ResponseEntity.ok(updatedCita);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
 }

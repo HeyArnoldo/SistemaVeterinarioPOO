@@ -20,6 +20,7 @@ public class Mascota {
     private String nombre;
     private String especie;
     private String raza;
+    private Integer edad;
 
     //Relaciones
     //Muchas mascotas perteneces a UN cliente;

@@ -33,14 +33,14 @@ public class Cliente {
     private Long id;
 
     private String nombres;
-    private String apellido_paterno;
-    private String apellido_materno;
+    private String apellidos;
 
     @Column(unique = true, nullable = false)
     private String dni;
 
     private String telefono;
-    private String correo_electronico;
+    private String email;
+    private String direccion;
 
     //RELACIONES
     //Un cliente puede tener muchas mascotas
