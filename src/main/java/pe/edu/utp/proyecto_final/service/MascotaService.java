@@ -28,7 +28,7 @@ public class MascotaService {
         Mascota mascota = new Mascota();
         mascota.setNombre(mascotaDTO.getNombre());
         mascota.setRaza(mascotaDTO.getRaza());
-        mascota.setEspecie(mascota.getEspecie());
+        mascota.setEspecie(mascotaDTO.getEspecie());
         mascota.setEdad(mascotaDTO.getEdad());
         mascota.setCliente(cliente);
 
