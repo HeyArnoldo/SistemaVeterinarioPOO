@@ -1,0 +1,55 @@
+name: Deploy to VPS
+
+# ¡EL DISPARADOR MÁS IMPORTANTE!
+# Esto se ejecuta CADA VEZ que se publica un nuevo "Release" en tu repo.
+on:
+  release:
+    types: [published] # Se activa cuando el release es público
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install sshpass
+        run: sudo apt-get install -y sshpass
+
+      - name: Download JAR from Release
+        run: |
+          # 1. Obtenemos la URL del .jar que tu OTRO workflow subió al release
+          # Usamos 'jq' para parsear el JSON de la respuesta de la API de GitHub
+          # y encontrar el asset llamado 'sistema-veterinario.jar'
+          ASSET_URL=$(echo "${{ toJSON(github.event.release.assets) }}" | \
+                      jq -r '.[] | select(.name == "sistema-veterinario.jar") | .browser_download_url')
+          
+          if [ -z "$ASSET_URL" ] || [ "$ASSET_URL" == "null" ]; then
+            echo "Error: Asset 'sistema-veterinario.jar' no se encontró en el release."
+            exit 1
+          fi
+
+          # 2. Descargamos el .jar
+          echo "Downloading asset from $ASSET_URL"
+          # -L sigue redirecciones
+          curl -L -o sistema-veterinario.jar $ASSET_URL
+
+      - name: Deploy to Server
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+        run: |
+          # 1. Copiar el nuevo .jar al servidor usando 'scp'
+          # Reemplazará el .jar antiguo en /home/ubuntu/UTP/
+          echo "Copying JAR to server..."
+          sshpass -p "$SSH_PASSWORD" scp -o StrictHostKeyChecking=no \
+            sistema-veterinario.jar \
+            $SSH_USER@$SSH_HOST:/home/ubuntu/UTP/sistema-veterinario.jar
+          
+          # 2. Conectarse por SSH y reiniciar el servicio
+          # systemd se encargará de parar el proceso antiguo e iniciar el nuevo
+          echo "Restarting service on server..."
+          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no \
+            $SSH_USER@$SSH_HOST \
+            "sudo systemctl restart sistema-veterinario"
+          
+          echo "Deploy complete!"
