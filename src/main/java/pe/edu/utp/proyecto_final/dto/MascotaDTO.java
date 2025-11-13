@@ -11,4 +11,5 @@ public class MascotaDTO {
     private String especie;
     private String raza;
     private Integer edad;
+    private Boolean buenComportamiento;
 }

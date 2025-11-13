@@ -23,7 +23,7 @@ public class MascotaService {
     public Mascota registrarMascota(MascotaDTO mascotaDTO){
         //1. Buscar al cliente dueño
         Cliente cliente = clienteRepository.findById(mascotaDTO.getClienteId())
-                .orElseThrow(() -> new RuntimeException("Error: Cliente no encontrado con ID proporcionado."));
+                .orElseThrow(() -> new RuntimeException("ERROR: Cliente no encontrado con ID proporcionado."));
         //2. Crear la mascota
         Mascota mascota = new Mascota();
         mascota.setNombre(mascotaDTO.getNombre());

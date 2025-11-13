@@ -52,6 +52,4 @@ public class Cliente {
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Cita> citas;
-
-
 }

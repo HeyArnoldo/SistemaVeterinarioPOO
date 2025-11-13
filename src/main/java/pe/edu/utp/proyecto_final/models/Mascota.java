@@ -21,6 +21,7 @@ public class Mascota {
     private String especie;
     private String raza;
     private Integer edad;
+    private Boolean buenComportamiento;
 
     //Relaciones
     //Muchas mascotas perteneces a UN cliente;
