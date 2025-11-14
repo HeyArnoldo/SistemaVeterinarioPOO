@@ -59,9 +59,14 @@ jobs:
           echo "path=$JAR_PATH" >> $GITHUB_OUTPUT
         shell: bash
 
-      # 3. Crear el Release en GitHub
-      - name: Create GitHub Release
-        id: create_release
+      - name: Rename JAR for Release
+        id: rename_jar
+        run: mv ${{ steps.find_jar.outputs.path }} sistema-veterinario.jar
+        shell: bash
+
+      #CREAR RELEASE CON JAR ADJUNTO
+      - name: Create Release and Upload Asset
+        id: create_release_with_asset
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
@@ -71,16 +76,5 @@ jobs:
           body: |
             Nueva versión automática del Sistema Veterinario.
             Compilado desde el commit: ${{ github.sha }}
-          draft: false
-          prerelease: false
-
-      # 4. Adjuntar el JAR compilado al Release
-      - name: Upload Release Asset (JAR)
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.find_jar.outputs.path }} # Ruta dinámica del JAR
-          asset_name: sistema-veterinario.jar # Nombre final en el release
-          asset_content_type: application/java-archive
+          #draft: false
+          files: sistema-veterinario.jar

@@ -16,18 +16,20 @@ jobs:
 
       - name: Download JAR from Release
         run: |
-          # 1. Busca CUALQUIER asset que termine en .jar
-          # Esto es mucho más robusto que buscar un nombre fijo
+          # 1. Obtenemos la URL del .jar que tu OTRO workflow subió al release
+          # Usamos 'jq' para parsear el JSON de la respuesta de la API de GitHub
+          # y encontrar el asset llamado 'sistema-veterinario.jar'
           ASSET_URL=$(echo "${{ toJSON(github.event.release.assets) }}" | \
-                      jq -r '.[] | select(.name | endswith(".jar")) | .browser_download_url')
+                      jq -r '.[] | select(.name == "sistema-veterinario.jar") | .browser_download_url')
           
           if [ -z "$ASSET_URL" ] || [ "$ASSET_URL" == "null" ]; then
-            echo "Error: No .jar asset was found in the release."
+            echo "Error: Asset 'sistema-veterinario.jar' no se encontró en el release."
             exit 1
           fi
 
-          # 2. Descargamos el .jar y le ponemos el nombre local que esperamos
+          # 2. Descargamos el .jar
           echo "Downloading asset from $ASSET_URL"
+          # -L sigue redirecciones
           curl -L -o sistema-veterinario.jar $ASSET_URL
 
       - name: Deploy to Server
