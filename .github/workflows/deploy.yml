@@ -2,7 +2,7 @@ name: Deploy to VPS
 
 on:
   release:
-    types: [published]
+    types: [published] # Se activa cuando el release anterior se publica
 
 jobs:
   deploy:
@@ -12,61 +12,70 @@ jobs:
       - name: Install sshpass
         run: sudo apt-get install -y sshpass
 
-      - name: Download JAR from Release (with API Retry)
-        # Añadimos el GITHUB_TOKEN al entorno para poder usar la API
+      # --- ESTE ES EL PASO CRÍTICO CORREGIDO ---
+      - name: Download JAR from Release (Correct Method)
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         run: |
           LOCAL_JAR_NAME="sistema-veterinario.jar"
-          ASSET_URL=""
+          ASSET_API_URL="" # Usaremos la URL de la API del asset, no la del navegador
           
-          # Esta es la URL de la API para este release específico
+          # URL de la API para consultar los metadatos de este release
           RELEASE_API_URL="${{ github.event.release.url }}"
 
-          echo "Buscando asset .jar en el release '${{ github.event.release.tag_name }}'..."
-          echo "URL de la API: $RELEASE_API_URL"
+          echo "Buscando asset 'sistema-veterinario.jar' en el release..."
+          echo "Release API URL: $RELEASE_API_URL"
 
-          # BUCLE DE REINTENTO:
-          # Ahora llama a la API en cada intento
+          # Bucle de reintento (esto está bien, lo mantenemos)
           for i in {1..6}; do
             # 1. LLAMAMOS A LA API DE GITHUB
-            # Usamos curl para obtener la lista de assets FRESCA
-            # -H "Authorization..." se autentica
-            # -H "Accept..." especifica la versión de la API
-            # El JSON de salida se pasa directamente a 'jq'
-            ASSET_URL=$(curl -s -L \
+            # Buscamos el asset por el NOMBRE EXACTO que le dimos en el workflow de build
+            # Y obtenemos la 'url' (la URL de la API), NO la 'browser_download_url'
+            ASSET_API_URL=$(curl -s -L \
               -H "Authorization: Bearer $GITHUB_TOKEN" \
               -H "Accept: application/vnd.github+json" \
               "$RELEASE_API_URL" \
-              | jq -r '.assets[] | select(.name | endswith(".jar")) | .browser_download_url')
+              | jq -r '.assets[] | select(.name == "sistema-veterinario.jar") | .url')
 
-            if [ -z "$ASSET_URL" ] || [ "$ASSET_URL" == "null" ]; then
+            if [ -z "$ASSET_API_URL" ] || [ "$ASSET_API_URL" == "null" ]; then
               echo "Intento $i/6: Asset .jar aún no encontrado. Esperando 10s..."
               sleep 10
             else
-              echo "¡Asset encontrado en el intento $i!"
+              echo "¡Asset encontrado! API URL: $ASSET_API_URL"
               break
             fi
           done
           
-          # 2. Comprobar si el asset se encontró después de los reintentos
-          if [ -z "$ASSET_URL" ] || [ "$ASSET_URL" == "null" ]; then
-            echo "Error: No se encontró ningún asset .jar en el release después de 60s."
-            echo "Verifica que el workflow de 'Build' esté subiendo el JAR correctamente."
+          # 2. Comprobar si el asset se encontró
+          if [ -z "$ASSET_API_URL" ] || [ "$ASSET_API_URL" == "null" ]; then
+            echo "Error: No se encontró el asset 'sistema-veterinario.jar' en el release."
             exit 1
           fi
 
-          # 3. Descargamos el .jar (Autenticado)
-          echo "Downloading asset from $ASSET_URL"
-          # -L sigue redirecciones
-          # -o lo guarda con el nombre local
-          # Necesitamos pasar el Header de "Accept" para descargar el binario
+          # 3. (LA CORRECCIÓN) Descargamos el binario usando la API URL
+          echo "Descargando binario desde la API..."
+          # Usamos -L para seguir redirecciones
+          # Usamos -o para guardar el archivo localmente
+          # Usamos la API URL ($ASSET_API_URL) que obtuvimos
+          # Pasamos el token de autorización
+          # ¡Y el header 'Accept: application/octet-stream' es ESENCIAL!
+          # Esto le dice a GitHub "quiero el archivo binario, no el JSON de metadatos".
           curl -L -o $LOCAL_JAR_NAME \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
             -H "Accept: application/octet-stream" \
-            "$ASSET_URL"
+            "$ASSET_API_URL"
           
           echo "Descarga completa. Archivo local: $LOCAL_JAR_NAME"
+          
+          # Verificación simple para asegurar que no es un archivo de texto (error)
+          if ! file $LOCAL_JAR_NAME | grep -q "Zip archive data"; then
+            echo "Error: El archivo descargado no parece ser un JAR (Zip archive)."
+            echo "Contenido inicial (puede ser un error de API):"
+            head -n 10 $LOCAL_JAR_NAME
+            exit 1
+          fi
+          echo "Verificación de tipo de archivo exitosa."
+
 
       - name: Deploy to Server
         env:
@@ -74,16 +83,16 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
         run: |
-          # 1. Copiar el nuevo .jar al servidor
-          echo "Copying JAR to server..."
+          # 1. Copiar el nuevo .jar al servidor (sin cambios)
+          echo "Copiando JAR al servidor..."
           sshpass -p "$SSH_PASSWORD" scp -o StrictHostKeyChecking=no \
             sistema-veterinario.jar \
             $SSH_USER@$SSH_HOST:/home/ubuntu/UTP/sistema-veterinario.jar
           
-          # 2. Conectarse por SSH y reiniciar el servicio
-          echo "Restarting service on server..."
+          # 2. Conectarse por SSH y reiniciar el servicio (sin cambios)
+          echo "Reiniciando el servicio en el servidor..."
           sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no \
             $SSH_USER@$SSH_HOST \
             "sudo systemctl restart sistema-veterinario"
           
-          echo "Deploy complete!"
+          echo "Deploy completo!"
