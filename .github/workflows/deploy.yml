@@ -1,10 +1,8 @@
 name: Deploy to VPS
 
-# ¡EL DISPARADOR MÁS IMPORTANTE!
-# Esto se ejecuta CADA VEZ que se publica un nuevo "Release" en tu repo.
 on:
   release:
-    types: [published] # Se activa cuando el release es público
+    types: [published]
 
 jobs:
   deploy:
@@ -14,23 +12,46 @@ jobs:
       - name: Install sshpass
         run: sudo apt-get install -y sshpass
 
-      - name: Download JAR from Release
+      - name: Download JAR from Release (with Retry)
         run: |
-          # 1. Obtenemos la URL del .jar que tu OTRO workflow subió al release
-          # Usamos 'jq' para parsear el JSON de la respuesta de la API de GitHub
-          # y encontrar el asset llamado 'sistema-veterinario.jar'
-          ASSET_URL=$(echo "${{ toJSON(github.event.release.assets) }}" | \
-                      jq -r '.[] | select(.name == "sistema-veterinario.jar") | .browser_download_url')
+          # Nombre local que usará el script (scp, ssh)
+          LOCAL_JAR_NAME="sistema-veterinario.jar"
+          ASSET_URL=""
+
+          echo "Buscando asset .jar en el release '${{ github.event.release.tag_name }}'..."
+
+          # BUCLE DE REINTENTO:
+          # Intenta 6 veces, con 10s de espera (total 1 minuto)
+          # para dar tiempo al workflow de Build a subir el asset.
+          for i in {1..6}; do
+            # 1. Obtenemos la URL de CUALQUIER asset que termine en .jar
+            # Esto es más robusto que buscar un nombre fijo
+            ASSET_URL=$(echo "${{ toJSON(github.event.release.assets) }}" | \
+                        jq -r '.[] | select(.name | endswith(".jar")) | .browser_download_url')
+
+            if [ -z "$ASSET_URL" ] || [ "$ASSET_URL" == "null" ]; then
+              echo "Intento $i/6: Asset .jar aún no encontrado. Esperando 10s..."
+              sleep 10
+            else
+              echo "¡Asset encontrado en el intento $i!"
+              break
+            fi
+          done
           
+          # 2. Comprobar si el asset se encontró después de los reintentos
           if [ -z "$ASSET_URL" ] || [ "$ASSET_URL" == "null" ]; then
-            echo "Error: Asset 'sistema-veterinario.jar' no se encontró en el release."
+            echo "Error: No se encontró ningún asset .jar en el release después de 60s."
+            echo "Verifica que el workflow de 'Build' esté subiendo el JAR correctamente."
             exit 1
           fi
 
-          # 2. Descargamos el .jar
+          # 3. Descargamos el .jar
           echo "Downloading asset from $ASSET_URL"
           # -L sigue redirecciones
-          curl -L -o sistema-veterinario.jar $ASSET_URL
+          # -o lo guarda con el nombre local que el resto del script espera
+          curl -L -o $LOCAL_JAR_NAME $ASSET_URL
+          
+          echo "Descarga completa. Archivo local: $LOCAL_JAR_NAME"
 
       - name: Deploy to Server
         env:
@@ -38,15 +59,13 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
         run: |
-          # 1. Copiar el nuevo .jar al servidor usando 'scp'
-          # Reemplazará el .jar antiguo en /home/ubuntu/UTP/
+          # 1. Copiar el nuevo .jar al servidor
           echo "Copying JAR to server..."
           sshpass -p "$SSH_PASSWORD" scp -o StrictHostKeyChecking=no \
             sistema-veterinario.jar \
             $SSH_USER@$SSH_HOST:/home/ubuntu/UTP/sistema-veterinario.jar
           
           # 2. Conectarse por SSH y reiniciar el servicio
-          # systemd se encargará de parar el proceso antiguo e iniciar el nuevo
           echo "Restarting service on server..."
           sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no \
             $SSH_USER@$SSH_HOST \
