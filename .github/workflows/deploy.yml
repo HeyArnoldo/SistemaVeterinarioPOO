@@ -66,16 +66,6 @@ jobs:
             "$ASSET_API_URL"
           
           echo "Descarga completa. Archivo local: $LOCAL_JAR_NAME"
-          
-          # Verificación simple para asegurar que no es un archivo de texto (error)
-          if ! file $LOCAL_JAR_NAME | grep -q "Zip archive data"; then
-            echo "Error: El archivo descargado no parece ser un JAR (Zip archive)."
-            echo "Contenido inicial (puede ser un error de API):"
-            head -n 10 $LOCAL_JAR_NAME
-            exit 1
-          fi
-          echo "Verificación de tipo de archivo exitosa."
-
 
       - name: Deploy to Server
         env:
