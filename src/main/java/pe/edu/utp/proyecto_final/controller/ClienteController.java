@@ -15,7 +15,7 @@ public class ClienteController {
     @Autowired
     private ClienteService clienteService;
 
-    //Crear un cliente : POST http://localhost:8080/api/clientes
+    //Crear un cliente : POST /api/clientes
     @PostMapping
     public ResponseEntity<Cliente> crearCliente(@RequestBody ClienteDTO clienteDTO){
         try{
@@ -27,13 +27,13 @@ public class ClienteController {
         }
     }
 
-    // LEER todos los clientes : GET http://localhost:8080/api/clientes
+    // LEER todos los clientes: GET /api/clientes
     @GetMapping
     public ResponseEntity<List<Cliente>> getAllClientes(){
         return ResponseEntity.ok(clienteService.getAllClientes());
     }
 
-    // LEER cliente por ID : GET http://localhost:8080/api/clientes/{id}
+    // LEER cliente por ID: GET /api/clientes/{id}
     @GetMapping("/{id}")
     public ResponseEntity<Cliente> getClienteById(@PathVariable Long id) {
         return clienteService.getClienteById(id)
@@ -41,7 +41,7 @@ public class ClienteController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // LEER cliente por DNI: GET http://localhost:8080/api/clientes/dni/{dni}
+    // LEER cliente por DNI: /api/clientes/dni/{dni}
     @GetMapping("/dni/{dni}")
     public ResponseEntity<Cliente> getClienteByDni(@PathVariable String dni) {
         return clienteService.getClienteByDni(dni)
@@ -49,14 +49,14 @@ public class ClienteController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // BORRAR cliente: DELETE http://localhost:8080/api/clientes/{id}
+    // BORRAR cliente: DELETE /api/clientes/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCliente(@PathVariable Long id) {
         clienteService.deleteCliente(id);
         return ResponseEntity.ok().build();
     }
 
-    // ACTUALIZAR cliente: PUT http://localhost:8080/api/clientes/{id}
+    // ACTUALIZAR cliente: PUT /api/clientes/{id}
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> updateCliente(@PathVariable Long id, @RequestBody ClienteDTO clienteDTO) {
         try {
