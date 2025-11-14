@@ -12,22 +12,33 @@ jobs:
       - name: Install sshpass
         run: sudo apt-get install -y sshpass
 
-      - name: Download JAR from Release (with Retry)
+      - name: Download JAR from Release (with API Retry)
+        # Añadimos el GITHUB_TOKEN al entorno para poder usar la API
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Nombre local que usará el script (scp, ssh)
           LOCAL_JAR_NAME="sistema-veterinario.jar"
           ASSET_URL=""
+          
+          # Esta es la URL de la API para este release específico
+          RELEASE_API_URL="${{ github.event.release.url }}"
 
           echo "Buscando asset .jar en el release '${{ github.event.release.tag_name }}'..."
+          echo "URL de la API: $RELEASE_API_URL"
 
           # BUCLE DE REINTENTO:
-          # Intenta 6 veces, con 10s de espera (total 1 minuto)
-          # para dar tiempo al workflow de Build a subir el asset.
+          # Ahora llama a la API en cada intento
           for i in {1..6}; do
-            # 1. Obtenemos la URL de CUALQUIER asset que termine en .jar
-            # Esto es más robusto que buscar un nombre fijo
-            ASSET_URL=$(echo "${{ toJSON(github.event.release.assets) }}" | \
-                        jq -r '.[] | select(.name | endswith(".jar")) | .browser_download_url')
+            # 1. LLAMAMOS A LA API DE GITHUB
+            # Usamos curl para obtener la lista de assets FRESCA
+            # -H "Authorization..." se autentica
+            # -H "Accept..." especifica la versión de la API
+            # El JSON de salida se pasa directamente a 'jq'
+            ASSET_URL=$(curl -s -L \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "$RELEASE_API_URL" \
+              | jq -r '.assets[] | select(.name | endswith(".jar")) | .browser_download_url')
 
             if [ -z "$ASSET_URL" ] || [ "$ASSET_URL" == "null" ]; then
               echo "Intento $i/6: Asset .jar aún no encontrado. Esperando 10s..."
@@ -45,11 +56,15 @@ jobs:
             exit 1
           fi
 
-          # 3. Descargamos el .jar
+          # 3. Descargamos el .jar (Autenticado)
           echo "Downloading asset from $ASSET_URL"
           # -L sigue redirecciones
-          # -o lo guarda con el nombre local que el resto del script espera
-          curl -L -o $LOCAL_JAR_NAME $ASSET_URL
+          # -o lo guarda con el nombre local
+          # Necesitamos pasar el Header de "Accept" para descargar el binario
+          curl -L -o $LOCAL_JAR_NAME \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/octet-stream" \
+            "$ASSET_URL"
           
           echo "Descarga completa. Archivo local: $LOCAL_JAR_NAME"
 
