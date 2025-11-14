@@ -15,7 +15,7 @@ jobs:
       - name: Download JAR from Release (with API Retry)
         # Añadimos el GITHUB_TOKEN al entorno para poder usar la API
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
         run: |
           LOCAL_JAR_NAME="sistema-veterinario.jar"
           ASSET_URL=""
