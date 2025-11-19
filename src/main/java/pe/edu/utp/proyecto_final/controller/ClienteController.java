@@ -15,7 +15,7 @@ public class ClienteController {
     @Autowired
     private ClienteService clienteService;
 
-    //Crear un cliente : POST /api/clientes
+    //Crear un cliente: POST /api/clientes
     @PostMapping
     public ResponseEntity<Cliente> crearCliente(@RequestBody ClienteDTO clienteDTO){
         try{

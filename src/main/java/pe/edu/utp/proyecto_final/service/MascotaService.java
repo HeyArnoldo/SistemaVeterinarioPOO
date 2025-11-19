@@ -30,6 +30,7 @@ public class MascotaService {
         mascota.setRaza(mascotaDTO.getRaza());
         mascota.setEspecie(mascotaDTO.getEspecie());
         mascota.setEdad(mascotaDTO.getEdad());
+        mascota.setBuenComportamiento(mascotaDTO.getBuenComportamiento());
         mascota.setCliente(cliente);
 
         //3. Asignar la mascota al cliente

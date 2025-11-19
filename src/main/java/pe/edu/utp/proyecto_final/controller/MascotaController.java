@@ -7,6 +7,9 @@ import pe.edu.utp.proyecto_final.dto.MascotaDTO;
 import pe.edu.utp.proyecto_final.models.Mascota;
 import pe.edu.utp.proyecto_final.service.MascotaService;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/mascotas")
 public class MascotaController {
@@ -17,11 +20,7 @@ public class MascotaController {
     @PostMapping
     public ResponseEntity<Mascota> registrarMascota(
             @RequestBody MascotaDTO mascotaDTO) {
-        try {
             return ResponseEntity.ok(mascotaService.registrarMascota(mascotaDTO));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(null);
-        }
     }
 
     //GET / Leer todas las mascotas
