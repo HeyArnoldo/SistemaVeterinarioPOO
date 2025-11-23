@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import pe.edu.utp.proyecto_final.dto.ClienteDTO;
 import pe.edu.utp.proyecto_final.dto.MascotaDTO;
 import pe.edu.utp.proyecto_final.models.Cliente;
 import pe.edu.utp.proyecto_final.models.Mascota;
@@ -30,7 +31,12 @@ class MascotaServiceTest {
     @InjectMocks
     private MascotaService mascotaService;
 
+    @InjectMocks
+    private ClienteService clienteService;
+
     private MascotaDTO mascotaDTO;
+
+    private ClienteDTO clienteDTO;
 
     @BeforeEach
     void setUp() {
@@ -41,6 +47,14 @@ class MascotaServiceTest {
         mascotaDTO.setEdad(3);
         mascotaDTO.setBuenComportamiento(true);
         mascotaDTO.setClienteId(1L);
+
+        clienteDTO = new ClienteDTO();
+        clienteDTO.setNombres("Juan");
+        clienteDTO.setApellidos("Perez");
+        clienteDTO.setDni("12345678");
+        clienteDTO.setEmail("juan.perez@gmail.com");
+        clienteDTO.setTelefono("987654321");
+        clienteDTO.setDireccion("Av. Siempre Viva 123");
     }
 
     @Test
@@ -58,7 +72,13 @@ class MascotaServiceTest {
     @DisplayName("registrarMascota crea la mascota asociada al cliente")
     void registrarMascotaDebeGuardarMascota() {
         Cliente cliente = new Cliente();
-        cliente.setId(1L);
+        cliente.setNombres("Juan");
+        cliente.setApellidos("Perez");
+        cliente.setDni("12345678");
+        cliente.setEmail("juan.perez@gmail.com");
+        cliente.setTelefono("987654321");
+        cliente.setDireccion("Av. Siempre Viva 123");
+
         when(clienteRepository.findById(mascotaDTO.getClienteId())).thenReturn(Optional.of(cliente));
         when(mascotaRepository.save(any(Mascota.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
