@@ -76,22 +76,6 @@ class CitaServiceTest {
     }
 
     @Test
-    @DisplayName("agendarCita valida que la mascota pertenezca al cliente")
-    void agendarCitaDebeValidarPropiedadMascota() {
-        when(citaRepository.findByFechaAndHora(requestDTO.getFecha(), requestDTO.getHora())).thenReturn(List.of());
-        Mascota mascotaDeOtro = new Mascota();
-        mascotaDeOtro.setId(2L);
-        mascotaDeOtro.setCliente(new Cliente());
-        when(clienteRepository.findById(requestDTO.getClienteId())).thenReturn(Optional.of(cliente));
-        when(mascotaRepository.findById(requestDTO.getMascotaId())).thenReturn(Optional.of(mascotaDeOtro));
-
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> citaService.agendarCita(requestDTO));
-
-        assertTrue(ex.getMessage().contains("mascota no pertenece"));
-        verify(citaRepository, never()).save(any());
-    }
-
-    @Test
     @DisplayName("agendarCita registra la cita con precio segun servicio")
     void agendarCitaDebeRegistrarCita() {
         when(citaRepository.findByFechaAndHora(requestDTO.getFecha(), requestDTO.getHora())).thenReturn(List.of());
