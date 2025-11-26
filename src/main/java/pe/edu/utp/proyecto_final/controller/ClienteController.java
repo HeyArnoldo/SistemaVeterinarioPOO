@@ -18,13 +18,8 @@ public class ClienteController {
     //Crear un cliente: POST /api/clientes
     @PostMapping
     public ResponseEntity<Cliente> crearCliente(@RequestBody ClienteDTO clienteDTO){
-        try{
             Cliente nuevoCliente = clienteService.crearCliente(clienteDTO);
             return ResponseEntity.ok(nuevoCliente);
-        }
-        catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(null);
-        }
     }
 
     // LEER todos los clientes: GET /api/clientes
@@ -59,12 +54,8 @@ public class ClienteController {
     // ACTUALIZAR cliente: PUT /api/clientes/{id}
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> updateCliente(@PathVariable Long id, @RequestBody ClienteDTO clienteDTO) {
-        try {
             Cliente updatedCliente = clienteService.updateCliente(id, clienteDTO);
             return ResponseEntity.ok(updatedCliente);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(null);
-        }
     }
 
 

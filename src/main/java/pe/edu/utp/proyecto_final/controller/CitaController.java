@@ -22,13 +22,8 @@ public class CitaController {
     //ENDPOINT para AGENDAR
     @PostMapping("/agendar")
     public ResponseEntity<Cita> agendarCita(@RequestBody CitaRequestDTO requestDTO){
-        try{
             Cita nuevaCita = citaService.agendarCita(requestDTO);
             return ResponseEntity.ok(nuevaCita);
-        }
-        catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(null);
-        }
     }
 
     //ENDPOINT para CONSULTAR DISPONIBILIDAD
@@ -55,14 +50,14 @@ public class CitaController {
     }
 
     //DELETE / Borrar una cita por ID
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id:[0-9]+}")
     public ResponseEntity<Void> deleteCita(@PathVariable Long id) {
         citaService.deleteCita(id);
         return ResponseEntity.ok().build();
     }
 
     //GET / Leer una cita por ID
-    @GetMapping("/{id}")
+    @GetMapping("/{id:[0-9]+}")
     public ResponseEntity<Cita> getCitaById(@PathVariable Long id) {
         return citaService.getCitaById(id)
                 .map(ResponseEntity::ok)
@@ -70,15 +65,11 @@ public class CitaController {
     }
 
     //UPDATE / Actualizar una cita
-    @PutMapping("/{id}")
+    @PutMapping("/{id:[0-9]+}")
     public ResponseEntity<Cita> updateCita(
             @PathVariable Long id,
             @RequestBody CitaRequestDTO citaDTO) {
-        try {
             Cita updatedCita = citaService.updateCita(id, citaDTO);
             return ResponseEntity.ok(updatedCita);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(null);
-        }
     }
 }

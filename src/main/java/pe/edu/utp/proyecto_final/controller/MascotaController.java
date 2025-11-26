@@ -7,9 +7,6 @@ import pe.edu.utp.proyecto_final.dto.MascotaDTO;
 import pe.edu.utp.proyecto_final.models.Mascota;
 import pe.edu.utp.proyecto_final.service.MascotaService;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @RestController
 @RequestMapping("/api/mascotas")
 public class MascotaController {
@@ -51,11 +48,7 @@ public class MascotaController {
     public ResponseEntity<Mascota> updateMascota(
             @PathVariable Long id,
             @RequestBody MascotaDTO mascotaDTO) {
-        try {
             Mascota updatedMascota = mascotaService.updateMascota(id, mascotaDTO);
             return ResponseEntity.ok(updatedMascota);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(null);
-        }
     }
 }
