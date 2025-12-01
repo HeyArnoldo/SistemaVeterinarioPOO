@@ -3,12 +3,13 @@ package pe.edu.utp.proyecto_final.service;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import pe.edu.utp.proyecto_final.models.enums.TipoServicio;
+import pe.edu.utp.proyecto_final.service.impl.ServicioServiceImpl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ServicioServiceTest {
 
-    private final ServicioService servicioService = new ServicioService();
+    private final ServicioService servicioService = new ServicioServiceImpl();
 
     @Test
     @DisplayName("getPrecio retorna el monto configurado para cada servicio")

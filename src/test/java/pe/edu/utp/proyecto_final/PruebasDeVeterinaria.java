@@ -6,6 +6,7 @@ import pe.edu.utp.proyecto_final.models.Cliente;
 import pe.edu.utp.proyecto_final.models.Mascota;
 import pe.edu.utp.proyecto_final.models.enums.TipoServicio;
 import pe.edu.utp.proyecto_final.service.ServicioService;
+import pe.edu.utp.proyecto_final.service.impl.ServicioServiceImpl;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -18,7 +19,7 @@ import java.util.List;
  */
 public class PruebasDeVeterinaria {
 
-    private final ServicioService servicioService = new ServicioService();
+    private final ServicioService servicioService = new ServicioServiceImpl();
 
     @Test
     void demoDelSistemaVeterinario() {
