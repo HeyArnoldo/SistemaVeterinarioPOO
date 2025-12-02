@@ -19,7 +19,7 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     public Cliente crearCliente(ClienteDTO clienteDTO) {
         // VALIDACIONES
-        if(clienteRepository.findByDni(clienteDTO.getDni()).isPresent()){
+        if (clienteRepository.findByDni(clienteDTO.getDni()).isPresent()) {
             throw new RuntimeException("Error: Ya existe un cliente con ese DNI proporcionado.");
         }
 
@@ -35,12 +35,12 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
-    public List<Cliente> getAllClientes(){
+    public List<Cliente> getAllClientes() {
         return clienteRepository.findAll();
     }
 
     @Override
-    public Optional<Cliente> getClienteById(Long id){
+    public Optional<Cliente> getClienteById(Long id) {
         return clienteRepository.findById(id);
     }
 

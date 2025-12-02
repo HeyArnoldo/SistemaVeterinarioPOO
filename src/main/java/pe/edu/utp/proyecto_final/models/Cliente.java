@@ -22,11 +22,16 @@ AGENDAR UNA CITA DE BAÑO DE PERROS
 -----------------------------------
 */
 
-@Data
-@NoArgsConstructor
+/**
+ * Clase Cliente que representa a un cliente del servicio de peluquería canina.
+ * @author Proyecto Final UTP Grupo 5
+ * @version 1.0
+ */
+
 @Entity
 @Table(name = "clientes")
-
+@Data
+@NoArgsConstructor
 public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

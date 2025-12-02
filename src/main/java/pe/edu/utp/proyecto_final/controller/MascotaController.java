@@ -17,7 +17,7 @@ public class MascotaController {
     @PostMapping
     public ResponseEntity<Mascota> registrarMascota(
             @RequestBody MascotaDTO mascotaDTO) {
-            return ResponseEntity.ok(mascotaService.registrarMascota(mascotaDTO));
+        return ResponseEntity.ok(mascotaService.registrarMascota(mascotaDTO));
     }
 
     //GET / Leer todas las mascotas
@@ -48,7 +48,7 @@ public class MascotaController {
     public ResponseEntity<Mascota> updateMascota(
             @PathVariable Long id,
             @RequestBody MascotaDTO mascotaDTO) {
-            Mascota updatedMascota = mascotaService.updateMascota(id, mascotaDTO);
-            return ResponseEntity.ok(updatedMascota);
+        Mascota updatedMascota = mascotaService.updateMascota(id, mascotaDTO);
+        return ResponseEntity.ok(updatedMascota);
     }
 }

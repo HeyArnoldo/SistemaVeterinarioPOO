@@ -30,9 +30,9 @@ public class CitaServiceImpl implements CitaService {
     private ServicioService servicioService; // Spring inyectará ServicioServiceImpl automáticamente
 
     @Override
-    public Cita agendarCita(CitaRequestDTO requestDTO){
+    public Cita agendarCita(CitaRequestDTO requestDTO) {
         // 1. VERIFICACIÓN DEL HORARIO
-        if (isHorarioOcupado(requestDTO.getFecha(), requestDTO.getHora())){
+        if (isHorarioOcupado(requestDTO.getFecha(), requestDTO.getHora())) {
             throw new RuntimeException("Error: Horario no disponible :c");
         }
 
@@ -43,7 +43,7 @@ public class CitaServiceImpl implements CitaService {
         Mascota mascota = mascotaRepository.findById(requestDTO.getMascotaId())
                 .orElseThrow(() -> new RuntimeException("Mascota no encontrada"));
 
-        if(!mascota.getCliente().getId().equals(cliente.getId())){
+        if (!mascota.getCliente().getId().equals(cliente.getId())) {
             throw new RuntimeException("Error: La mascota no pertenece a ese cliente");
         }
 
@@ -61,17 +61,17 @@ public class CitaServiceImpl implements CitaService {
     }
 
     @Override
-    public boolean isHorarioOcupado(LocalDate fecha, LocalTime hora){
+    public boolean isHorarioOcupado(LocalDate fecha, LocalTime hora) {
         return !citaRepository.findByFechaAndHora(fecha, hora).isEmpty();
     }
 
     @Override
-    public List<Cita> getCitasPorFecha(LocalDate fecha){
+    public List<Cita> getCitasPorFecha(LocalDate fecha) {
         return citaRepository.findByFecha(fecha);
     }
 
     @Override
-    public List<Cita> getAllCitas(){
+    public List<Cita> getAllCitas() {
         return citaRepository.findAll();
     }
 

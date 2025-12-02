@@ -21,7 +21,7 @@ public class MascotaServiceImpl implements MascotaService {
     private ClienteRepository clienteRepository;
 
     @Override
-    public Mascota registrarMascota(MascotaDTO mascotaDTO){
+    public Mascota registrarMascota(MascotaDTO mascotaDTO) {
         // 1. Buscar al cliente dueño
         Cliente cliente = clienteRepository.findById(mascotaDTO.getClienteId())
                 .orElseThrow(() -> new RuntimeException("ERROR: Cliente no encontrado con ID proporcionado."));
@@ -39,7 +39,7 @@ public class MascotaServiceImpl implements MascotaService {
     }
 
     @Override
-    public List<Mascota> getAllMascotas(){
+    public List<Mascota> getAllMascotas() {
         return mascotaRepository.findAll();
     }
 

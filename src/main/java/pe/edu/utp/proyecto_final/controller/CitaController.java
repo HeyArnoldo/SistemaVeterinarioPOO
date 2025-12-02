@@ -21,25 +21,23 @@ public class CitaController {
 
     //ENDPOINT para AGENDAR
     @PostMapping("/agendar")
-    public ResponseEntity<Cita> agendarCita(@RequestBody CitaRequestDTO requestDTO){
-            Cita nuevaCita = citaService.agendarCita(requestDTO);
-            return ResponseEntity.ok(nuevaCita);
+    public ResponseEntity<Cita> agendarCita(@RequestBody CitaRequestDTO requestDTO) {
+        Cita nuevaCita = citaService.agendarCita(requestDTO);
+        return ResponseEntity.ok(nuevaCita);
     }
 
     //ENDPOINT para CONSULTAR DISPONIBILIDAD
     @GetMapping("/disponibilidad")
     public ResponseEntity<Boolean> verificarDisponibilidad(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime hora)
-        {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime hora) {
         return ResponseEntity.ok(!citaService.isHorarioOcupado(fecha, hora));
     }
 
     //ENDPOINT para VER AGENDA DEL DÍA
     @GetMapping("/agenda/{fecha}")
     public ResponseEntity<List<Cita>> getAgendaDelDia(
-            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha)
-        {
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
         return ResponseEntity.ok(citaService.getCitasPorFecha(fecha));
     }
 
@@ -69,7 +67,7 @@ public class CitaController {
     public ResponseEntity<Cita> updateCita(
             @PathVariable Long id,
             @RequestBody CitaRequestDTO citaDTO) {
-            Cita updatedCita = citaService.updateCita(id, citaDTO);
-            return ResponseEntity.ok(updatedCita);
+        Cita updatedCita = citaService.updateCita(id, citaDTO);
+        return ResponseEntity.ok(updatedCita);
     }
 }

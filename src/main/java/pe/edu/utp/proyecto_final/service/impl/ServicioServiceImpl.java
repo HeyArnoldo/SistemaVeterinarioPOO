@@ -8,7 +8,7 @@ import pe.edu.utp.proyecto_final.service.ServicioService;
 public class ServicioServiceImpl implements ServicioService {
 
     @Override
-    public double getPrecio(TipoServicio servicio){
+    public double getPrecio(TipoServicio servicio) {
         return switch (servicio) {
             case BASICO -> 40.0;
             case COMPLETO -> 55.0;
