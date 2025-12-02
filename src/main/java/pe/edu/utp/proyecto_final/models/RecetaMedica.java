@@ -1,8 +1,8 @@
 package pe.edu.utp.proyecto_final.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * Clase RecetaMedica que representa una receta médica asociada a una cita y un medicamento.
@@ -13,8 +13,12 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "recetas_medicas")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class RecetaMedica {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

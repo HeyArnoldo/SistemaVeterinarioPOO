@@ -1,8 +1,8 @@
 package pe.edu.utp.proyecto_final.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * Clase Vacuna que representa las vacunas administradas a las mascotas.
@@ -13,8 +13,12 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "vacunas")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Vacuna {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

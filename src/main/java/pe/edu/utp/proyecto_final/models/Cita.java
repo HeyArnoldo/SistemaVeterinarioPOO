@@ -1,5 +1,6 @@
 package pe.edu.utp.proyecto_final.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import pe.edu.utp.proyecto_final.models.enums.TipoServicio;
@@ -18,8 +19,12 @@ import java.time.LocalTime;
 
 @Entity
 @Table(name = "citas")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Cita implements Serializable {
 
     @Serial

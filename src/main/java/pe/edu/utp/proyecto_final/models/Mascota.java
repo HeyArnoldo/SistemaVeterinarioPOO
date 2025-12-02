@@ -1,9 +1,9 @@
 package pe.edu.utp.proyecto_final.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -16,8 +16,12 @@ import java.util.List;
 
 @Entity
 @Table(name = "mascotas")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Mascota {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +40,7 @@ public class Mascota {
     private Cliente cliente;
 
     //Una mascota puede tener muchas citas
-    @OneToMany(mappedBy = "mascota")
+    @OneToMany(mappedBy = "mascota", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Cita> citas;
 

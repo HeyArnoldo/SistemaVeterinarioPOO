@@ -16,10 +16,12 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "productos")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
-
 public class Producto implements Serializable {
 
     @Serial

@@ -2,8 +2,7 @@ package pe.edu.utp.proyecto_final.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -16,8 +15,11 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "carnet_vacunacion")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class CarnetVacunacion {
     @Id

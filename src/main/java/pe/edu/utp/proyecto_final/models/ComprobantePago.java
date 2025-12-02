@@ -17,8 +17,11 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comprobantes_pago")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ComprobantePago implements Serializable {
 
