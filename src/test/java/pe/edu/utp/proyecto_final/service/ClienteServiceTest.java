@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import pe.edu.utp.proyecto_final.dto.ClienteDTO;
 import pe.edu.utp.proyecto_final.models.Cliente;
 import pe.edu.utp.proyecto_final.repository.ClienteRepository;
+import pe.edu.utp.proyecto_final.service.impl.ClienteServiceImpl;
 
 import java.util.Optional;
 
@@ -24,7 +25,7 @@ class ClienteServiceTest {
     private ClienteRepository clienteRepository;
 
     @InjectMocks
-    private ClienteService clienteService;
+    private ClienteServiceImpl clienteService;
 
     private ClienteDTO clienteDTO;
 

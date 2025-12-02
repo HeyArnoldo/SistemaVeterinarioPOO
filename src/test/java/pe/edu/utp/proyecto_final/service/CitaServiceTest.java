@@ -15,6 +15,7 @@ import pe.edu.utp.proyecto_final.models.enums.TipoServicio;
 import pe.edu.utp.proyecto_final.repository.CitaRepository;
 import pe.edu.utp.proyecto_final.repository.ClienteRepository;
 import pe.edu.utp.proyecto_final.repository.MascotaRepository;
+import pe.edu.utp.proyecto_final.service.impl.CitaServiceImpl;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -40,7 +41,7 @@ class CitaServiceTest {
     private ServicioService servicioService;
 
     @InjectMocks
-    private CitaService citaService;
+    private CitaServiceImpl citaService;
 
     private CitaRequestDTO requestDTO;
     private Cliente cliente;

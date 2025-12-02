@@ -31,7 +31,7 @@ public class Veterinario {
     private String apellidos;
 
     @Column(nullable = false, unique = true)
-    private String cmvpString; // Código de Colegio Médico Veterinario
+    private String cmvp; // Código de Colegio Médico Veterinario
 
     private String especialidad;
     private String telefono;

@@ -13,6 +13,7 @@ import pe.edu.utp.proyecto_final.models.Cliente;
 import pe.edu.utp.proyecto_final.models.Mascota;
 import pe.edu.utp.proyecto_final.repository.ClienteRepository;
 import pe.edu.utp.proyecto_final.repository.MascotaRepository;
+import pe.edu.utp.proyecto_final.service.impl.MascotaServiceImpl;
 
 import java.util.Optional;
 
@@ -29,10 +30,7 @@ class MascotaServiceTest {
     private ClienteRepository clienteRepository;
 
     @InjectMocks
-    private MascotaService mascotaService;
-
-    @InjectMocks
-    private ClienteService clienteService;
+    private MascotaServiceImpl mascotaService;
 
     private MascotaDTO mascotaDTO;
 
